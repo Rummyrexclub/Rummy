@@ -1,56 +1,32 @@
-const express = require('express')
-const http = require('http');
-const WebSocket = require('ws');
-const Game = require('./game');
-
+const express = require('express');
+const mongoose = require('mongoose');
+const path = require('path');
 const app = express();
 
-const server = http.createServer(app);
-const wss = new WebSocket.Server({ server });
-const rummy = new Game(wss);
-
-// Serve Static Files/Assets
+app.use(express.json());
 app.use(express.static('public'));
 
-// Ignore Socket Errors
-wss.on('error', () => console.log('*errored*'));
-wss.on('close', () => console.log('*disconnected*'));
+// Database Connection
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB Connected"))
+  .catch(err => console.log(err));
 
-/*----------------------ENDPOINTS----------------------*/
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/public/index.html');
-});
+// User Data Model
+const User = mongoose.model('User', new mongoose.Schema({
+    name: String,
+    phone: String,
+    password: String,
+    coins: { type: Number, default: 0 }
+}));
 
-app.get('/join/:lobby', (req, res) => {
-  let code = req.params.lobby;
-  if (rummy.addLobby(code)) {
-    res.redirect('/game/' + req.params.lobby + '/' + rummy.lobbys[code].token);
-  } else {
-    res.redirect('/');
-  }
+// Sign Up Route
+app.post('/api/signup', async (req, res) => {
+    const { name, phone, password } = req.body;
+    const user = new User({ name, phone, password, coins: 100 }); // Free 100 coins
+    await user.save();
+    res.json({ success: true, message: "Account Created!" });
 });
-
-app.get('/joincpu/:lobby', (req, res) => {
-  let code = req.params.lobby;
-  if (rummy.addLobby(code, cpu=true)) {
-    res.redirect('/game/' + req.params.lobby + '/' + rummy.lobbys[code].token);
-  } else {
-    res.redirect('/');
-  }
-});
-
-app.get('/game/:lobby/:token', (req, res) => {
-  let code = "" + req.params.lobby,
-      token = req.params.token;
-  if (req.params.token && rummy.lobbys[code] && rummy.lobbys[code].token == token) {
-    res.sendFile(__dirname + '/public/game.html');
-  } else {
-    res.redirect('/');
-  }
-});
-/*-----------------------------------------------------*/
 
 // Start Server
-server.listen(5000, () => {
-  console.log('Listening on port 5000...')
-});
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
