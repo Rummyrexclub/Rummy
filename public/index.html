@@ -24,10 +24,8 @@
             max-width: 400px;
             margin: auto;
             border: 2px solid #ffd700;
-            box-shadow: 0 0 20px rgba(255, 215, 0, 0.2);
         }
         h1 { color: #ffd700; text-shadow: 2px 2px 4px #000; margin-bottom: 10px; font-size: 32px; }
-        p { color: #ddd; margin-bottom: 25px; }
         input {
             width: 100%;
             padding: 15px;
@@ -36,7 +34,6 @@
             border: 2px solid #0a4d2d;
             box-sizing: border-box;
             font-size: 16px;
-            outline: none;
         }
         button {
             background: linear-gradient(180deg, #ffeb3b 0%, #fbc02d 100%);
@@ -47,11 +44,8 @@
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
             width: 100%;
-            transition: 0.3s;
         }
-        button:active { transform: scale(0.98); }
         .support-btn {
             position: fixed;
             bottom: 20px;
@@ -62,34 +56,27 @@
             border-radius: 50px;
             text-decoration: none;
             font-weight: bold;
-            display: flex;
-            align-items: center;
             box-shadow: 2px 2px 10px rgba(0,0,0,0.5);
-            font-size: 14px;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
         <h1>RUMMY REX</h1>
         <p>Real People. Real Games. Real Money.</p>
         <input type="text" id="playerName" placeholder="Enter Player Name..." required>
         <button onclick="startGame()">PLAY NOW</button>
     </div>
-
-    <a href="https://wa.me/917997700070?text=Hi%20Kalyan,%20I%20want%20to%20add%20coins%20to%20my%20account" class="support-btn">
+    <a href="https://wa.me/917997700070?text=Hi%20Kalyan,%20I%20want%20to%20add%20coins" class="support-btn">
         💬 WhatsApp Support
     </a>
-
     <script>
         function startGame() {
             const name = document.getElementById('playerName').value;
             if (name.trim() !== "") {
-                // Takes them directly to the game with their chosen name
                 window.location.href = "/join/" + name;
             } else {
-                alert("Please enter your name to start playing!");
+                alert("Please enter your name!");
             }
         }
     </script>
